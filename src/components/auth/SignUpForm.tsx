@@ -69,6 +69,11 @@ export function SignUpForm({ onSwitchToSignIn, onSignUpSuccess }: SignUpFormProp
       return;
     }
 
+    toast({
+      title: "Verify your email",
+      description: "A confirmation link has been sent. Please check your email to complete the signup process.",
+    });
+
     const { error: profileError } = await supabase
       .from("profiles")
       .upsert({

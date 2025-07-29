@@ -1,73 +1,84 @@
-# Welcome to your Lovable project
+# 📝 Full Stack Note-Taking App
 
-## Project info
+A modern, fully-functional note-taking web application built with React (TypeScript), Supabase, and Tailwind CSS. This project allows users to securely sign up, sign in, and manage personal notes with a mobile-friendly, sleek UI inspired by the provided design.
 
-**URL**: https://lovable.dev/projects/8ca3a766-2972-4b62-9dbc-780db5d14d3b
+## 🌐 Live Demo
 
-## How can I edit this code?
+🔗 [https://your-deployed-url.vercel.app](https://your-deployed-url.vercel.app)
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## ✅ Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8ca3a766-2972-4b62-9dbc-780db5d14d3b) and start prompting.
+- **Authentication**
+  - Sign up via email/password with email verification
+  - Full validation for inputs, and API errors
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Notes Management**
+  - Create, read, update, and delete notes
+  - Notes are private and user-specific
+  - Styled with meaningful icons and smooth UX
 
-**Use your preferred IDE**
+- **User Profile**
+  - Displays user's full name, email, and phone
+  - Data loaded from Supabase `profiles` table
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **UI/UX**
+  - Clean, responsive layout using TailwindCSS
+  - Toast notifications for success and error handling
+  - Optimized for both desktop and mobile devices
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🛠 Tech Stack
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+| Layer         | Technology              |
+|---------------|--------------------------|
+| Frontend      | React (TypeScript), Vite |
+| Styling       | TailwindCSS, ShadCN UI   |
+| Backend/Auth  | Supabase (Auth + DB)     |
+| Database      | PostgreSQL (via Supabase)|
+| State         | React Hooks, Zustand     |
+| Deployment    | Vercel + Supabase        |
+| Icons         | Lucide Icons             |
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📁 Folder Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+src/
+│
+├── components/ # Reusable UI components (Button, Card, etc.)
+├── hooks/ # Toast hook and utility hooks
+├── pages/ # Auth and dashboard routes
+├── integrations/ # Supabase client setup and types
+├── assets/ # Fonts, images (from provided asset link)
+└── App.tsx # Main app entry
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 🚀 Getting Started Locally
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 1. Clone the repository
+```bash
+git clone https://github.com/yourusername/note-taking-app.git
+cd note-taking-app
 
-## What technologies are used for this project?
 
-This project is built with:
+npm install
+# or
+yarn install
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
 
-## How can I deploy this project?
+✅ Deployment
+Frontend: Vercel
 
-Simply open [Lovable](https://lovable.dev/projects/8ca3a766-2972-4b62-9dbc-780db5d14d3b) and click on Share -> Publish.
+Backend/Auth/DB: Supabase
 
-## Can I connect a custom domain to my Lovable project?
 
-Yes, you can!
+📌 Author
+Built by Partha Jyoti Cheleng
+Finalized and tested for production deployment
+📬 Reach out for collaboration or deployment help!
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
