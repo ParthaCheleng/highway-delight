@@ -25,13 +25,15 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+
 interface Note {
   id: string;
   title: string;
   content: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
+
 
 interface DashboardProps {
   onSignOut: () => void;
@@ -61,41 +63,59 @@ export function Dashboard({ onSignOut }: DashboardProps) {
   const [newNote, setNewNote] = useState({ title: "", content: "" });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-        error: authError
-      } = await supabase.auth.getUser();
+  const fetchUserAndNotes = async () => {
+    const {
+      data: { user },
+      error: authError
+    } = await supabase.auth.getUser();
 
-      if (authError || !user) {
-        toast({
-          title: "Authentication Error",
-          description: "Could not fetch user data.",
-          variant: "destructive"
-        });
-        return;
-      }
+    if (authError || !user) {
+      toast({
+        title: "Authentication Error",
+        description: "Could not fetch user data.",
+        variant: "destructive"
+      });
+      return;
+    }
 
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
 
-      if (profileError || !profile) {
-        toast({
-          title: "Profile Error",
-          description: "Could not load user profile.",
-          variant: "destructive"
-        });
-        return;
-      }
+    if (profileError || !profile) {
+      toast({
+        title: "Profile Error",
+        description: "Could not load user profile.",
+        variant: "destructive"
+      });
+      return;
+    }
 
-      setUser(profile);
-    };
+    setUser(profile);
 
-    fetchUser();
-  }, []);
+    // Fetch notes
+    const { data: notesData, error: notesError } = await supabase
+      .from("notes")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (notesError) {
+      toast({
+        title: "Notes Error",
+        description: "Could not load your notes.",
+        variant: "destructive"
+      });
+    } else {
+      setNotes(notesData || []);
+    }
+  };
+
+  fetchUserAndNotes();
+}, []);
+
 
   const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -112,66 +132,95 @@ export function Dashboard({ onSignOut }: DashboardProps) {
     });
   };
 
-  const handleCreateNote = () => {
-    if (!newNote.title.trim() || !newNote.content.trim()) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in both title and content",
-        variant: "destructive"
-      });
-      return;
-    }
+      const handleCreateNote = async () => {
+      if (!newNote.title.trim() || !newNote.content.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "Please fill in both title and content",
+          variant: "destructive"
+        });
+        return;
+      }
 
-    const note: Note = {
-      id: Date.now().toString(),
-      title: newNote.title,
-      content: newNote.content,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      const { data, error } = await supabase.from("notes").insert({
+        user_id: user.id,
+        title: newNote.title,
+        content: newNote.content
+      }).select().single();
+
+      if (error) {
+        toast({
+          title: "Creation Failed",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setNotes((prev) => [data, ...prev]);
+      setNewNote({ title: "", content: "" });
+      setIsCreating(false);
+
+      toast({
+        title: "Note Created",
+        description: "Your note has been created successfully"
+      });
     };
 
-    setNotes((prev) => [note, ...prev]);
-    setNewNote({ title: "", content: "" });
-    setIsCreating(false);
 
-    toast({
-      title: "Note Created",
-      description: "Your note has been created successfully"
-    });
-  };
+        const handleUpdateNote = async () => {
+        if (!editingNote) return;
 
-  const handleUpdateNote = () => {
-    if (!editingNote || !editingNote.title.trim() || !editingNote.content.trim()) {
+        const { data, error } = await supabase
+          .from("notes")
+          .update({
+            title: editingNote.title,
+            content: editingNote.content
+          })
+          .eq("id", editingNote.id)
+          .select()
+          .single();
+
+        if (error) {
+          toast({
+            title: "Update Failed",
+            description: error.message,
+            variant: "destructive"
+          });
+          return;
+        }
+
+        setNotes((prev) =>
+          prev.map((note) => (note.id === data.id ? data : note))
+        );
+
+        setEditingNote(null);
+        toast({
+          title: "Note Updated",
+          description: "Your note has been updated successfully"
+        });
+      };
+
+
+    const handleDeleteNote = async (noteId: string) => {
+      const { error } = await supabase.from("notes").delete().eq("id", noteId);
+
+      if (error) {
+        toast({
+          title: "Delete Failed",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setNotes((prev) => prev.filter((note) => note.id !== noteId));
       toast({
-        title: "Validation Error",
-        description: "Please fill in both title and content",
-        variant: "destructive"
+        title: "Note Deleted",
+        description: "Your note has been deleted successfully"
       });
-      return;
-    }
+    };
 
-    setNotes((prev) =>
-      prev.map((note) =>
-        note.id === editingNote.id
-          ? { ...editingNote, updatedAt: new Date().toISOString() }
-          : note
-      )
-    );
-
-    setEditingNote(null);
-    toast({
-      title: "Note Updated",
-      description: "Your note has been updated successfully"
-    });
-  };
-
-  const handleDeleteNote = (noteId: string) => {
-    setNotes((prev) => prev.filter((note) => note.id !== noteId));
-    toast({
-      title: "Note Deleted",
-      description: "Your note has been deleted successfully"
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-primary/5">
@@ -221,8 +270,90 @@ export function Dashboard({ onSignOut }: DashboardProps) {
         </Card>
 
         {/* Notes */}
-        {/* ...existing notes UI logic here (as in your original code)... */}
-        {/* You can paste your note creation/editing logic here unchanged */}
+        {/* Notes Control Section */}
+          <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <Input
+              type="text"
+              placeholder="Search notes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full md:max-w-sm"
+            />
+            <Button onClick={() => setIsCreating(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Note
+            </Button>
+          </div>
+
+          {/* Create Note */}
+          {isCreating && (
+            <Card className="mb-6 p-4">
+              <Input
+                placeholder="Note Title"
+                value={newNote.title}
+                onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
+                className="mb-2"
+              />
+              <Textarea
+                placeholder="Note Content"
+                value={newNote.content}
+                onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+                className="mb-4"
+              />
+              <div className="flex gap-2">
+                <Button onClick={handleCreateNote}>Create</Button>
+                <Button variant="secondary" onClick={() => setIsCreating(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </Card>
+          )}
+
+          {/* Notes List */}
+          <div className="grid gap-4">
+            {filteredNotes.map((note) => (
+              <Card key={note.id} className="p-4">
+                {editingNote?.id === note.id ? (
+                  <>
+                    <Input
+                      value={editingNote.title}
+                      onChange={(e) => setEditingNote({ ...editingNote, title: e.target.value })}
+                      className="mb-2"
+                    />
+                    <Textarea
+                      value={editingNote.content}
+                      onChange={(e) => setEditingNote({ ...editingNote, content: e.target.value })}
+                      className="mb-4"
+                    />
+                    <div className="flex gap-2">
+                      <Button onClick={handleUpdateNote}>Save</Button>
+                      <Button variant="secondary" onClick={() => setEditingNote(null)}>Cancel</Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between items-center mb-1">
+                      <h3 className="text-lg font-semibold">{note.title}</h3>
+                      <Badge variant="outline">{formatDate(note.created_at)}</Badge>
+                    </div>
+                    <p className="text-muted-foreground mb-3">{note.content}</p>
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={() => setEditingNote(note)}>
+                        <Edit3 className="w-4 h-4 mr-1" />
+                        Edit
+                      </Button>
+                      <Button variant="destructive" size="sm" onClick={() => handleDeleteNote(note.id)}>
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </Card>
+            ))}
+          </div>
+
+        
       </div>
     </div>
   );

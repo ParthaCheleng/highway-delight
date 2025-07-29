@@ -3,6 +3,27 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface Database {
   public: {
     Tables: {
+      notes: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          content: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          content: string;
+          created_at?: string;
+        };
+        Update: {
+          title?: string;
+          content?: string;
+        };
+      };
+
       profiles: {
         Row: {
           id: string;
@@ -33,6 +54,8 @@ export interface Database {
     Enums: {};
     CompositeTypes: {};
   };
+
+  
 }
 
 
