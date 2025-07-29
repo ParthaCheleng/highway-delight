@@ -247,7 +247,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
 
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
-        <Card className="auth-card mb-8">
+        <Card className="auth-card mb-8 bg-card border border-border/30 shadow-md hover:shadow-lg rounded-xl transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <User className="h-5 w-5 text-primary" />
@@ -271,7 +271,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
 
         {/* Notes */}
         {/* Notes Control Section */}
-          <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ">
             <Input
               type="text"
               placeholder="Search notes..."
@@ -312,7 +312,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
           {/* Notes List */}
           <div className="grid gap-4">
             {filteredNotes.map((note) => (
-              <Card key={note.id} className="p-4">
+              <Card key={note.id} className="p-4 bg-card border border-border/30 shadow-md hover:shadow-lg rounded-xl transition-shadow">
                 {editingNote?.id === note.id ? (
                   <>
                     <Input
@@ -332,11 +332,20 @@ export function Dashboard({ onSignOut }: DashboardProps) {
                   </>
                 ) : (
                   <>
-                    <div className="flex justify-between items-center mb-1">
-                      <h3 className="text-lg font-semibold">{note.title}</h3>
-                      <Badge variant="outline">{formatDate(note.created_at)}</Badge>
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-2">
+                        <StickyNote className="w-4 h-4 text-primary" />
+                        <h3 className="text-lg font-semibold">{note.title}</h3>
+                      </div>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        <Badge variant="outline">{formatDate(note.created_at)}</Badge>
+                      </div>
                     </div>
-                    <p className="text-muted-foreground mb-3">{note.content}</p>
+                    <div className="flex items-start gap-2 text-muted-foreground mb-3">
+                      <Edit3 className="w-4 h-4 mt-1 text-muted-foreground" />
+                      <p className="text-sm leading-relaxed">{note.content}</p>
+                    </div>
                     <div className="flex gap-2">
                       <Button size="sm" onClick={() => setEditingNote(note)}>
                         <Edit3 className="w-4 h-4 mr-1" />
@@ -350,6 +359,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
                   </>
                 )}
               </Card>
+
             ))}
           </div>
 

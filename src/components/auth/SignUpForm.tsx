@@ -106,7 +106,6 @@ export function SignUpForm({ onSwitchToSignIn, onSignUpSuccess }: SignUpFormProp
           {isLoading ? "Signing up..." : "Create Account"}
         </Button>
         <Separator />
-        <Button variant="outline" className="w-full">Continue with Google</Button>
         <p className="text-center text-sm mt-2">
           Already have an account? <span className="text-primary cursor-pointer" onClick={onSwitchToSignIn}>Sign in</span>
         </p>
