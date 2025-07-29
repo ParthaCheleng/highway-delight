@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Mail, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SignInFormProps {
   onSwitchToSignUp: () => void;
@@ -45,37 +46,23 @@ export function SignInForm({ onSwitchToSignUp, onSignInSuccess }: SignInFormProp
   };
 
   const handleSignIn = async () => {
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    setIsLoading(true);
-    try {
-      // Simulate API call - replace with Supabase integration
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Mock authentication check
-      if (formData.email === "user@example.com" && formData.password === "password") {
-        toast({
-          title: "Welcome back!",
-          description: "You've been signed in successfully",
-        });
-        onSignInSuccess();
-      } else {
-        toast({
-          title: "Sign In Failed",
-          description: "Invalid email or password",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Sign In Failed",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  const { email, password } = formData;
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    toast({ title: "Login Failed", description: error.message, variant: "destructive" });
+    setIsLoading(false);
+    return;
+  }
+
+  toast({ title: "Welcome back!", description: "You have been signed in successfully." });
+  onSignInSuccess();
+  setIsLoading(false);
+};
 
   const handleGoogleSignIn = () => {
     // Replace with Supabase Google OAuth integration
