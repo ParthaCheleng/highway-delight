@@ -4,7 +4,7 @@ A modern, fully-functional note-taking web application built with React (TypeScr
 
 ## 🌐 Live Demo
 
-🔗 [https://your-deployed-url.vercel.app](https://your-deployed-url.vercel.app)
+🔗 [https://notes-two-cyan.vercel.app/](https://notes-two-cyan.vercel.app/)
 
 ---
 
@@ -62,7 +62,7 @@ src/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/note-taking-app.git
+git clone https://github.com/ParthaCheleng/highway-delight.git
 cd note-taking-app
 
 
@@ -82,3 +82,5 @@ Built by Partha Jyoti Cheleng
 Finalized and tested for production deployment
 📬 Reach out for collaboration or deployment help!
 
+ 
+📬 Please note : The email verification might not pop to notify you that the verification email link has been sent and the site might directly redirect you to the "Dashboard" where it     might say, " Failed to fetch user data ". If something like that happens, please do not panic and check your email that you registered with. You will see the verification like there. Once you verify, all your sign up credentials will be visible on the dashboard and you'll be able to access its full functionalities. Thank you for you understanding!
